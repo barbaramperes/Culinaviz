@@ -3713,17 +3713,23 @@
                                 const name = dNode.data.name;
                                 let fontSize, fontWeight, fillColor, yPosition, dominantBaseline;
 
-                                if (dNode.depth === 1) {
-                                    fontSize = "10px"; fontWeight = "600"; fillColor = "#333"; yPosition = -dNode.r - 3; dominantBaseline = "text-after-edge";
+                                if (dNode.depth === 1 || dNode.depth === 2) {
+                                    fontSize = dNode.depth === 1 ? "10px" : "11px";
+                                    fontWeight = "600";
+                                    fillColor = "#333";
+                                    yPosition = -dNode.r - 3;
+                                    dominantBaseline = "text-after-edge";
                                 } else {
-                                    fontSize = dNode.depth === 2 ? "11px" : "9px"; fontWeight = dNode.depth === 2 ? "600" : "normal";
-                                    const regionName = dNode.depth === 2 ? dNode.parent.data.name : dNode.parent.parent.data.name;
+                                    fontSize = "9px";
+                                    fontWeight = "normal";
+                                    const regionName = dNode.parent.parent.data.name;
                                     fillColor = (regionName === "China") ? "#000000" : "white";
-                                    yPosition = 0; dominantBaseline = "middle";
+                                    yPosition = 0;
+                                    dominantBaseline = "middle";
                                 }
                                 const textElement = group.append("text").attr("class", "label-bubble").attr("y", yPosition) // Added -bubble suffix
                                     .style("font-size", fontSize).style("font-weight", fontWeight).style("fill", fillColor).style("dominant-baseline", dominantBaseline).text(name);
-                                if (dNode.depth === 1) {
+                                if (dNode.depth === 1 || dNode.depth === 2) {
                                     const textNode = textElement.node();
                                     if (textNode) {
                                         const bbox = textNode.getBBox(); const padding = 3;
