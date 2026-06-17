@@ -65,3 +65,41 @@ $(window).load(function () { // makes sure the whole site is loaded
 	}
 
 });
+
+
+/* Corrected scroll-spy.
+   The bundled stickyNavbar caches the header height at load and uses
+   overlapping position bands, so once the D3 visualizations change the
+   section heights it highlights the wrong (usually previous) nav item.
+   This runs after stickyNavbar via requestAnimationFrame and sets the
+   active link from live section positions, so it always wins. */
+$(window).load(function () {
+	var navSel = '#nav-main li a[href^="#"], #nav-mobile li a[href^="#"]';
+	var sections = [];
+	$('#nav-main li a[href^="#"]').each(function () {
+		var id = $(this).attr('href').slice(1);
+		if (id && document.getElementById(id)) sections.push(id);
+	});
+
+	function setActive() {
+		var line = window.pageYOffset + window.innerHeight * 0.28;
+		var current = sections[0];
+		for (var i = 0; i < sections.length; i++) {
+			var el = document.getElementById(sections[i]);
+			if (el && el.getBoundingClientRect().top + window.pageYOffset <= line) {
+				current = sections[i];
+			}
+		}
+		$(navSel).removeClass('active');
+		$('#nav-main li a[href="#' + current + '"], #nav-mobile li a[href="#' + current + '"]').addClass('active');
+	}
+
+	var ticking = false;
+	$(window).on('scroll resize', function () {
+		if (!ticking) {
+			window.requestAnimationFrame(function () { setActive(); ticking = false; });
+			ticking = true;
+		}
+	});
+	setActive();
+});
