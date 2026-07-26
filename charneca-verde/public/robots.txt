@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://charneca-verde.pages.dev/sitemap.xml
