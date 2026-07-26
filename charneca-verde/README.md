@@ -10,11 +10,11 @@ São ficheiros HTML, CSS e JavaScript — abre-se no browser e funciona.
 
 ## Ver o site
 
-Basta abrir o `index.html`. Para ter os caminhos todos certinhos, prefira
-servir a pasta:
+O site publicável vive todo dentro de `public/`. Tudo o que está fora
+dessa pasta é documentação interna e nunca vai para a internet.
 
 ```bash
-python3 -m http.server 8000
+cd public && python3 -m http.server 8000
 # depois abra http://localhost:8000
 ```
 
@@ -26,7 +26,7 @@ Para ver noutro idioma sem clicar no seletor: `?lang=en` ou `?lang=fr`.
 
 Cinco coisas. Nenhuma exige saber programar.
 
-### 1. Contactos — `js/config.js`
+### 1. Contactos — `public/js/config.js`
 
 É o único ficheiro que precisa de tocar para os contactos. Altere os
 valores e o telefone, o WhatsApp e o email mudam em todo o site de uma vez.
@@ -38,7 +38,7 @@ whatsapp: "351912345678",         // só dígitos, sem o "+"
 email: "geral@charnecaverde.pt",
 ```
 
-### 2. Formulário de orçamento — `js/config.js`
+### 2. Formulário de orçamento — `public/js/config.js`
 
 O formulário tem três modos, escolhidos em `formularioModo`:
 
@@ -64,7 +64,7 @@ formularioUrl: "https://formspree.io/f/xxxxxxxx"
 
 O campo escondido `_gotcha` bloqueia grande parte do spam automático.
 
-### 3. Números reais — `index.html`
+### 3. Números reais — `public/index.html`
 
 Na secção `<!-- ============ STATS ============ -->` estão valores de
 exemplo (12 anos, 300+ jardins, 4,9/5). **Troque pelos verdadeiros ou
@@ -85,13 +85,13 @@ O mesmo vale para:
   plantações. São argumentos fortes precisamente porque os concorrentes
   não os põem por escrito — mas só os pode manter no site se forem verdade.
 
-### 4. Fotografias — `images/`
+### 4. Fotografias — `public/images/`
 
 Neste momento a galeria mostra blocos de cor. Leia o
-[`images/README.md`](images/README.md): explica o que fotografar, com que
+[`public/images/README.md`](public/images/README.md): explica o que fotografar, com que
 tamanho e como substituir. É a alteração com maior impacto de todas.
 
-### 5. Endereço — `index.html`, `robots.txt`, `sitemap.xml`
+### 5. Endereço — `public/index.html`, `public/robots.txt`, `public/sitemap.xml`
 
 Os ficheiros apontam para `https://charneca-verde.pages.dev`, o endereço
 gratuito do Cloudflare Pages, partindo do princípio de que o projeto lá se
@@ -109,24 +109,33 @@ etiquetas `canonical`, `hreflang`, `og:*` e nos dados estruturados
 1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages**
    → **Create** → separador **Pages** → **Upload assets**
 2. Nome do projeto: `charneca-verde` (define o endereço `.pages.dev`)
-3. Arraste um ZIP com o conteúdo desta pasta — o `index.html` tem de ficar
-   na **raiz** do ZIP, não dentro de outra pasta
+3. Arraste um ZIP com o **conteúdo de `public/`** — o `index.html` tem de
+   ficar na raiz do ZIP, não dentro de outra pasta
 4. **Deploy site**
 
-Não inclua no ZIP os ficheiros `README.md`, `PESQUISA-CONCORRENCIA.md` nem
-`images/README.md`: uma vez publicados ficariam acessíveis a qualquer
-pessoa que adivinhasse o endereço, e a análise da concorrência não é para
-ser pública.
+Cada alteração exige um novo upload em **Create deployment**.
 
-Cada alteração exige um novo upload em **Create deployment**. Para
-publicação automática a cada alteração, ligue o repositório em
-**Settings → Builds** (sem comando de build; o *output directory* é a raiz).
+### Cloudflare Pages, ligado ao GitHub (republica sozinho)
+
+**Workers & Pages → Create → Pages → Connect to Git**, escolha o
+repositório e configure:
+
+| Campo | Valor |
+|---|---|
+| Framework preset | None |
+| Build command | *(vazio)* |
+| Build output directory | `public` |
+
+O `public` é o que garante que o `README.md` e a
+`PESQUISA-CONCORRENCIA.md` ficam no repositório mas **não** são
+publicados — a análise da concorrência não é para ser pública.
 
 ### Alternativas
 
-- **GitHub Pages** — Settings → Pages → branch `main`, pasta `/ (root)`.
-- **Netlify** — arraste a pasta para [app.netlify.com/drop](https://app.netlify.com/drop).
-  É o único destes que trata formulários sem serviços externos.
+- **GitHub Pages** — só serve a raiz ou `/docs`, por isso obrigaria a
+  mover os ficheiros para fora de `public/`.
+- **Netlify** — *publish directory* `public`. É o único destes que trata
+  formulários sem serviços externos.
 
 ---
 
@@ -134,23 +143,26 @@ publicação automática a cada alteração, ligue o repositório em
 
 ```
 .
-├── index.html          página completa (português no HTML)
-├── css/styles.css      estilos
-├── js/
-│   ├── config.js       ← contactos do negócio (editar aqui)
-│   ├── i18n.js         ← traduções EN e FR
-│   └── main.js         idiomas, menu, formulário, animações
-├── assets/             logótipo, favicon, imagem de partilha
-├── images/             fotografias dos trabalhos (a preencher)
-├── robots.txt
-└── sitemap.xml
+├── public/                     ← tudo o que vai para a internet
+│   ├── index.html              página completa (português no HTML)
+│   ├── css/styles.css          estilos
+│   ├── js/
+│   │   ├── config.js           ← contactos do negócio (editar aqui)
+│   │   ├── i18n.js             ← traduções EN e FR
+│   │   └── main.js             idiomas, menu, formulário, animações
+│   ├── assets/                 logótipo, favicon, imagem de partilha
+│   ├── images/                 fotografias dos trabalhos (a preencher)
+│   ├── robots.txt
+│   └── sitemap.xml
+├── README.md                   este ficheiro (não publicado)
+└── PESQUISA-CONCORRENCIA.md    análise de mercado (não publicada)
 ```
 
 ### Como funcionam os idiomas
 
 O português está escrito directamente no HTML — é o que o Google indexa e
 é o que aparece mesmo se o JavaScript falhar. As traduções de inglês e
-francês vivem no `js/i18n.js`, indexadas por chave:
+francês vivem no `public/js/i18n.js`, indexadas por chave:
 
 ```html
 <h3 data-i18n="svc.lawn.t">Relvados</h3>
@@ -161,8 +173,8 @@ en: { "svc.lawn.t": "Lawns" },
 fr: { "svc.lawn.t": "Pelouses" }
 ```
 
-Para **mudar um texto em português**, edite o `index.html`.
-Para **mudar um texto em inglês ou francês**, edite o `js/i18n.js`.
+Para **mudar um texto em português**, edite o `public/index.html`.
+Para **mudar um texto em inglês ou francês**, edite o `public/js/i18n.js`.
 Para **acrescentar texto novo**, ponha-o no HTML com um `data-i18n` novo e
 acrescente a mesma chave aos dois dicionários.
 

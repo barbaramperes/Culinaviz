@@ -137,7 +137,8 @@ p  { margin: 0 0 1em; text-wrap: pretty; }
   transition: background-color .16s ease, color .16s ease;
 }
 .main-nav a:hover { background: var(--green-100); color: var(--green-800); }
-.main-nav a.nav-cta { margin-left: 8px; color: #fff; }
+/* border-radius repetido: .main-nav a (9px) ganharia ao .btn por especificidade */
+.main-nav a.nav-cta { margin-left: 8px; color: #fff; border-radius: 999px; }
 .main-nav a.nav-cta:hover { background: var(--clay-600); }
 
 .header-actions { display: flex; align-items: center; gap: 12px; }
