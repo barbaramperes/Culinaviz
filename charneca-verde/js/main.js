@@ -176,33 +176,91 @@
   /* -------------------------------------------------------
      6. Formulário de orçamento
      ------------------------------------------------------- */
+  /* Junta os campos preenchidos num texto legível, na língua do visitante. */
+  function composeMessage(form, lang) {
+    var campos = [
+      ["nome",       "form.name"],
+      ["telefone",   "form.phone"],
+      ["email",      "form.email"],
+      ["localidade", "form.place"],
+      ["area",       "form.area"],
+      ["servico",    "form.service"],
+      ["mensagem",   "form.msg"]
+    ];
+
+    var linhas = [t("form.subject", lang), ""];
+    campos.forEach(function (par) {
+      var el = form.elements[par[0]];
+      var valor = el && el.value ? el.value.trim() : "";
+      if (valor) linhas.push(t(par[1], lang) + ": " + valor);
+    });
+    return linhas.join("\n");
+  }
+
   function initForm() {
     var form   = document.getElementById("quoteForm");
     var status = document.getElementById("formStatus");
     if (!form) return;
 
+    var modo = CFG.formularioModo || "whatsapp";
+
+    /* Sem JavaScript o browser faria um POST para o action; em modo
+       WhatsApp ou email isso não faz sentido, por isso desligamo-lo. */
+    if (modo !== "servidor") form.removeAttribute("action");
+
+    function feedback(estado, chave, lang) {
+      status.className = "form-status" + (estado ? " " + estado : "");
+      status.textContent = t(chave, lang);
+    }
+
     form.addEventListener("submit", function (e) {
-      var lang = document.documentElement.getAttribute("data-lang") || "pt";
-      var action = form.getAttribute("action") || "";
-
       if (!form.checkValidity()) return; // deixa o browser mostrar os erros
-
       e.preventDefault();
 
-      if (action.indexOf("SEU_ID_AQUI") !== -1) {
-        status.className = "form-status err";
-        status.textContent = t("form.err", lang);
-        console.warn("[Charneca Verde] Falta configurar o endpoint do formulário no atributo action do <form id=\"quoteForm\">. Ver README.md.");
+      var lang = document.documentElement.getAttribute("data-lang") || "pt";
+      var texto = composeMessage(form, lang);
+
+      /* ---------- WhatsApp ---------- */
+      if (modo === "whatsapp") {
+        if (!CFG.whatsapp || /^3?51?0+$/.test(CFG.whatsapp)) {
+          feedback("err", "form.err", lang);
+          console.warn("[Charneca Verde] Falta o número de WhatsApp em js/config.js.");
+          return;
+        }
+        window.open("https://wa.me/" + CFG.whatsapp + "?text=" + encodeURIComponent(texto), "_blank", "noopener");
+        feedback("ok", "form.waOpen", lang);
+        return;
+      }
+
+      /* ---------- Email ---------- */
+      if (modo === "email") {
+        if (!CFG.email) {
+          feedback("err", "form.err", lang);
+          console.warn("[Charneca Verde] Falta o email em js/config.js.");
+          return;
+        }
+        window.location.href = "mailto:" + CFG.email +
+          "?subject=" + encodeURIComponent(t("form.subject", lang)) +
+          "&body="    + encodeURIComponent(texto);
+        feedback("ok", "form.mailOpen", lang);
+        return;
+      }
+
+      /* ---------- Servidor (Formspree ou equivalente) ---------- */
+      var url = CFG.formularioUrl || form.getAttribute("action") || "";
+      if (!url || url.indexOf("SEU_ID_AQUI") !== -1) {
+        feedback("err", "form.err", lang);
+        console.warn("[Charneca Verde] Falta o endereço do formulário em formularioUrl (js/config.js).");
         return;
       }
 
       var btn = form.querySelector('button[type="submit"]');
       var original = btn ? btn.textContent : "";
       if (btn) { btn.disabled = true; btn.textContent = t("form.sending", lang); }
-      status.className = "form-status";
+      feedback("", "", lang);
       status.textContent = "";
 
-      fetch(action, {
+      fetch(url, {
         method: "POST",
         body: new FormData(form),
         headers: { Accept: "application/json" }
@@ -210,12 +268,10 @@
         .then(function (res) {
           if (!res.ok) throw new Error("HTTP " + res.status);
           form.reset();
-          status.className = "form-status ok";
-          status.textContent = t("form.ok", lang);
+          feedback("ok", "form.ok", lang);
         })
         .catch(function () {
-          status.className = "form-status err";
-          status.textContent = t("form.err", lang);
+          feedback("err", "form.err", lang);
         })
         .finally(function () {
           if (btn) { btn.disabled = false; btn.textContent = original; }

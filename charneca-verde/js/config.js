@@ -28,5 +28,27 @@ window.CV_CONFIG = {
   email: "geral@charnecaverde.pt",
 
   /* Deixe vazio ("") para esconder a morada. */
-  morada: "Caldas da Rainha, Leiria"
+  morada: "Caldas da Rainha, Leiria",
+
+  /* -------------------------------------------------------
+     Para onde vai o formulário de orçamento.
+
+     "whatsapp" — abre o WhatsApp com o pedido já escrito.
+                  Não precisa de conta nem de servidor. É o
+                  modo atual e o que funciona no Cloudflare
+                  Pages sem mais nada.
+
+     "email"    — abre o programa de email do visitante com o
+                  pedido já escrito. Alternativa se não usar
+                  WhatsApp no negócio.
+
+     "servidor" — envia em segundo plano para o endereço
+                  indicado em formularioUrl (Formspree ou
+                  equivalente). Só escolha isto depois de ter
+                  esse endereço.
+     ------------------------------------------------------- */
+  formularioModo: "whatsapp",
+
+  /* Usado apenas quando formularioModo é "servidor". */
+  formularioUrl: ""
 };

@@ -241,7 +241,10 @@ window.CV_I18N = {
     "form.submit": "Send request",
     "form.note": "Reply within 24 working hours. Your details are used only to answer this request.",
     "form.sending": "Sending…",
+    "form.subject": "Quote request — Charneca Verde",
     "form.ok": "Thank you. Your request has been sent — we'll be in touch within 24 hours.",
+    "form.waOpen": "We've opened WhatsApp with your request already written. Just press send.",
+    "form.mailOpen": "We've opened your email app with the request already written. Just press send.",
     "form.err": "Something went wrong. Please call us or email us directly.",
 
     "footer.desc": "Gardening and green space maintenance in Caldas da Rainha and across Portugal's Silver Coast.",
@@ -489,7 +492,10 @@ window.CV_I18N = {
     "form.submit": "Envoyer la demande",
     "form.note": "Réponse sous 24 heures ouvrables. Vos données servent uniquement à répondre à cette demande.",
     "form.sending": "Envoi en cours…",
+    "form.subject": "Demande de devis — Charneca Verde",
     "form.ok": "Merci. Votre demande a bien été envoyée — nous vous recontactons sous 24 heures.",
+    "form.waOpen": "Nous avons ouvert WhatsApp avec votre demande déjà rédigée. Il ne reste qu'à l'envoyer.",
+    "form.mailOpen": "Nous avons ouvert votre messagerie avec la demande déjà rédigée. Il ne reste qu'à l'envoyer.",
     "form.err": "Une erreur s'est produite. Appelez-nous ou écrivez-nous directement.",
 
     "footer.desc": "Jardinage et entretien d'espaces verts à Caldas da Rainha et dans toute la région Ouest.",
@@ -509,11 +515,25 @@ window.CV_I18N = {
   }
 };
 
-/* Textos em português usados por JavaScript (não estão no HTML). */
+/* Textos em português usados por JavaScript (não estão no HTML).
+   As etiquetas form.* repetem o que está no formulário porque são
+   usadas para escrever a mensagem de WhatsApp/email. */
 window.CV_I18N_PT = {
   "hero.cta2": "Ligar agora",
   "contact.waText": "Enviar mensagem",
+
+  "form.name": "Nome",
+  "form.phone": "Telefone",
+  "form.email": "Email",
+  "form.place": "Localidade",
+  "form.area": "Área aproximada",
+  "form.service": "Serviço pretendido",
+  "form.msg": "Mensagem",
+
   "form.sending": "A enviar…",
+  "form.subject": "Pedido de orçamento — Charneca Verde",
   "form.ok": "Obrigado. O seu pedido foi enviado — entramos em contacto dentro de 24 horas.",
+  "form.waOpen": "Abrimos o WhatsApp com o seu pedido já escrito. Só falta carregar em enviar.",
+  "form.mailOpen": "Abrimos o seu programa de email com o pedido já escrito. Só falta carregar em enviar.",
   "form.err": "Não foi possível enviar. Ligue-nos ou escreva-nos diretamente."
 };

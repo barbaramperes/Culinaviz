@@ -38,19 +38,31 @@ whatsapp: "351912345678",         // só dígitos, sem o "+"
 email: "geral@charnecaverde.pt",
 ```
 
-### 2. Formulário de orçamento — `index.html`
+### 2. Formulário de orçamento — `js/config.js`
 
-O formulário está pronto mas ainda não envia para lado nenhum. Crie uma
-conta gratuita em [formspree.io](https://formspree.io) (50 mensagens por
-mês no plano grátis), copie o endereço do seu formulário e substitua no
-`index.html`:
+O formulário tem três modos, escolhidos em `formularioModo`:
 
-```html
-<form ... action="https://formspree.io/f/SEU_ID_AQUI" method="POST">
+| Modo | O que acontece | Precisa de |
+|---|---|---|
+| `"whatsapp"` *(atual)* | Junta os campos numa mensagem e abre o WhatsApp com tudo já escrito | Só o número em `whatsapp` |
+| `"email"` | O mesmo, mas abre o programa de email do visitante | Só o `email` |
+| `"servidor"` | Envia em segundo plano, sem sair do site | Um endereço em `formularioUrl` |
+
+O modo **WhatsApp** é o que está ativo porque funciona no Cloudflare
+Pages sem qualquer serviço externo — o Cloudflare Pages, ao contrário do
+Netlify, não trata formulários. A mensagem é composta na língua em que o
+visitante está a ver o site.
+
+Se mais tarde preferir receber os pedidos por email sem o visitante ter
+de os enviar, crie uma conta gratuita em [formspree.io](https://formspree.io)
+(50 mensagens/mês), copie o endereço do formulário e ponha:
+
+```js
+formularioModo: "servidor",
+formularioUrl: "https://formspree.io/f/xxxxxxxx"
 ```
 
-Enquanto não fizer isto, quem submeter vê uma mensagem de erro. O campo
-escondido `_gotcha` já bloqueia grande parte do spam automático.
+O campo escondido `_gotcha` bloqueia grande parte do spam automático.
 
 ### 3. Números reais — `index.html`
 
@@ -79,30 +91,42 @@ Neste momento a galeria mostra blocos de cor. Leia o
 [`images/README.md`](images/README.md): explica o que fotografar, com que
 tamanho e como substituir. É a alteração com maior impacto de todas.
 
-### 5. Domínio — `index.html`, `robots.txt`, `sitemap.xml`
+### 5. Endereço — `index.html`, `robots.txt`, `sitemap.xml`
 
-Substitua `www.charnecaverde.pt` pelo domínio real nos três ficheiros
-(nas etiquetas `canonical`, `hreflang`, `og:*` e nos dados estruturados
-`application/ld+json`, incluindo o telefone e as coordenadas).
+Os ficheiros apontam para `https://charneca-verde.pages.dev`, o endereço
+gratuito do Cloudflare Pages, partindo do princípio de que o projeto lá se
+chama `charneca-verde`. Se lhe der outro nome, ou quando comprar um
+domínio próprio, substitua esse endereço nos três ficheiros — nas
+etiquetas `canonical`, `hreflang`, `og:*` e nos dados estruturados
+`application/ld+json`, onde também estão o telefone e as coordenadas.
 
 ---
 
 ## Publicar
 
-### GitHub Pages (gratuito)
+### Cloudflare Pages, por upload direto (sem terminal e sem Git)
 
-1. Repositório → **Settings** → **Pages**
-2. *Source*: `Deploy from a branch`, branch `main`, pasta `/ (root)`
-3. Fica em `https://<utilizador>.github.io/charneca-verde/`
-4. Para usar domínio próprio: crie um ficheiro `CNAME` com
-   `www.charnecaverde.pt` lá dentro e aponte o DNS para o GitHub.
+1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages**
+   → **Create** → separador **Pages** → **Upload assets**
+2. Nome do projeto: `charneca-verde` (define o endereço `.pages.dev`)
+3. Arraste um ZIP com o conteúdo desta pasta — o `index.html` tem de ficar
+   na **raiz** do ZIP, não dentro de outra pasta
+4. **Deploy site**
 
-### Netlify ou Cloudflare Pages
+Não inclua no ZIP os ficheiros `README.md`, `PESQUISA-CONCORRENCIA.md` nem
+`images/README.md`: uma vez publicados ficariam acessíveis a qualquer
+pessoa que adivinhasse o endereço, e a análise da concorrência não é para
+ser pública.
 
-Arraste a pasta para [app.netlify.com/drop](https://app.netlify.com/drop).
-Publica em segundos e dá HTTPS automático. Nenhum comando de build é
-necessário — o campo *build command* fica vazio e o *publish directory* é
-a raiz.
+Cada alteração exige um novo upload em **Create deployment**. Para
+publicação automática a cada alteração, ligue o repositório em
+**Settings → Builds** (sem comando de build; o *output directory* é a raiz).
+
+### Alternativas
+
+- **GitHub Pages** — Settings → Pages → branch `main`, pasta `/ (root)`.
+- **Netlify** — arraste a pasta para [app.netlify.com/drop](https://app.netlify.com/drop).
+  É o único destes que trata formulários sem serviços externos.
 
 ---
 
